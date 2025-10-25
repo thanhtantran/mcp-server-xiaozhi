@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "calculator": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["calculator.py"]
+    },
+    "phatnguoi": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["phatnguoi.py"]
+    }
+  }
+}
