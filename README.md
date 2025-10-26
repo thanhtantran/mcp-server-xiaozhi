@@ -1,6 +1,7 @@
 # mcp-server-xiaozhi
 
-Test thử một số mcp-server để dùng với Tiểu Trí, chạy tốt trên các thiết bị Orange Pi như Orange Pi 5, Orange Pi 4A, Orange Pi 3B ...
+Test thử một số mcp-server để dùng với Tiểu Trí, chạy tốt trên các thiết bị Orange Pi nh ư 
+[Orange Pi 5](https://orangepi.vn/shop/orange-pi-5-chip-rk3588s-ram-8gb), [Orange Pi 4A](https://orangepi.vn/shop/orange-pi-4a-phien-ban-2gb-ram), [Orange Pi 3B](https://orangepi.vn/shop/orange-pi-3b-chip-rk3566-wifi5-bt5-ram-4gb) ...
 
 ## Quick Start
 
