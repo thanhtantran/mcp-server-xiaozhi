@@ -8,11 +8,19 @@ Test thử một số mcp-server để dùng với Tiểu Trí
 ```bash
 pip install -r requirements.txt
 ```
+Đối với Phạt nguội API, cần cài NodeJS (dùng NVM cài node 18), sau đó cài đặt chạy background trong service
+```bash
+sudo cp phatnguoi-api/phatnguoi-api.service /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable --now phatnguoi-api.service
+```
+File `phatnguoi.py` cai sử dụng `localhost:3033` nếu thay đổi phải sửa file này
 
 2. Set up environment variables
 ```bash
 export MCP_ENDPOINT=<your_mcp_endpoint>
 ```
+hoặc tạo file `.env` và paste `export MCP_ENDPOINT=<your_mcp_endpoint>` vào đó
 
 3. Run the calculator example
 ```bash
@@ -37,4 +45,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 Forked from the original https://github.com/78/mcp-calculator
+API Phạt nguội lấy từ https://github.com/anyideaz/phatnguoi-api
 
