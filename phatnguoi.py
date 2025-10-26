@@ -1,82 +1,50 @@
 # phatnguoi.py
+import asyncio
+import aiohttp
 from mcp.server.fastmcp import FastMCP
-import requests
-from PIL import Image
-import io
-import pytesseract
-from bs4 import BeautifulSoup
-import re
+import logging
+
+logger = logging.getLogger("phatnguoi_mcp")
 
 mcp = FastMCP("PhatNguoi")
 
-BASE_URL = "https://www.csgt.vn"
-CAPTCHA_URL = f"{BASE_URL}/lib/captcha/captcha.class.php"
-FORM_URL = f"{BASE_URL}/?mod=contact&task=tracuu_post&ajax"
-RESULTS_URL = f"{BASE_URL}/tra-cuu-phuong-tien-vi-pham.html"
-
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    "Content-Type": "application/x-www-form-urlencoded",
-}
-
-
-def solve_captcha(session):
-    r = session.get(CAPTCHA_URL)
-    img = Image.open(io.BytesIO(r.content))
-    text = pytesseract.image_to_string(img)
-    return re.sub(r"[^A-Za-z0-9]", "", text).strip()
-
-
-def extract_violations(html):
-    soup = BeautifulSoup(html, "html.parser")
-    table = soup.find("table", {"class": "table_list"})
-    results = []
-    if not table:
-        return []
-
-    rows = table.find_all("tr")[1:]  # skip header
-    for row in rows:
-        cols = [c.get_text(strip=True) for c in row.find_all("td")]
-        if len(cols) >= 5:
-            results.append({
-                "stt": cols[0],
-                "ngay_vi_pham": cols[1],
-                "dia_diem": cols[2],
-                "hanh_vi": cols[3],
-                "don_vi_lap_bb": cols[4],
-            })
-    return results
-
-
 @mcp.tool()
-def phat_nguoi(bienso: str) -> dict:
+async def check_traffic_violation(license_plate: str) -> dict:
     """
-    Tra cứu thông tin phạt nguội từ CSGT.vn theo biển số xe.
+    Tra cứu phạt nguội thông qua Node.js API.
+    API: http://localhost:3033/api?licensePlate={license_plate}
+    Hàm này là async — MCP client sẽ đợi cho đến khi nhận được kết quả.
     """
-    with requests.Session() as session:
-        session.headers.update(headers)
+    base_url = "http://localhost:3033/api"
+    params = {"licensePlate": license_plate}
 
-        for attempt in range(5):
-            captcha = solve_captcha(session)
-            data = {
-                "BienKS": bienso,
-                "Xe": "1",
-                "captcha": captcha,
-                "ipClient": "8.8.8.8",
-                "cUrl": "1",
-            }
-            r = session.post(FORM_URL, data=data)
-            if r.text.strip() != "404":
-                break
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url, params=params, timeout=60) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    logger.error(f"API error {resp.status}: {text}")
+                    return {"success": False, "message": f"HTTP {resp.status}: {text}"}
 
-        res = session.get(f"{RESULTS_URL}?LoaiXe=1&BienKiemSoat={bienso}")
-        violations = extract_violations(res.text)
+                data = await resp.json()
+                logger.info(f"Result for {license_plate}: {data}")
+                return {"success": True, "data": data}
 
-        if violations:
-            return {"success": True, "plate": bienso, "violations": violations}
-        else:
-            return {"success": False, "message": "Không tìm thấy dữ liệu hoặc captcha sai."}
+    except asyncio.TimeoutError:
+        logger.error("Timeout waiting for Node.js API response")
+        return {"success": False, "message": "Timeout waiting for Node.js API"}
 
+    except aiohttp.ClientError as e:
+        logger.error(f"Network error: {e}")
+        return {"success": False, "message": f"Network error: {e}"}
 
+# Run the MCP server (stdio transport)
 if __name__ == "__main__":
     mcp.run(transport="stdio")
+
+    # ✅ Test trực tiếp không qua MCP, test xong xóa đi
+    # print("=== TEST TRA CỨU PHẠT NGUỘI ===\n")
+    # result = check_traffic_violation("30H47465")  # thay biển số tùy ý, biển 30H47465 đang có phạt nguội
+    
+    # import json
+    # print(json.dumps(result, ensure_ascii=False, indent=2))
