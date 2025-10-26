@@ -44,6 +44,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-Forked from the original https://github.com/78/mcp-calculator
-API Phạt nguội lấy từ https://github.com/anyideaz/phatnguoi-api
+- Forked from the original https://github.com/78/mcp-calculator
+- API Phạt nguội lấy từ https://github.com/anyideaz/phatnguoi-api
 
