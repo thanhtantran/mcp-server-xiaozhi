@@ -1,0 +1,15 @@
+[Unit]
+Description=PhatNguoi API Node.js Server
+After=network.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/mcp-server-xiaozhi/phatnguoi-api/
+ExecStart=/home/admin/.nvm/versions/node/v18.20.8/bin/node src/server.js
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+{
+  "name": "phatnguoi",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "anyideaz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anyideaz/phatnguoi-api.git"
+  },
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/axios": "^0.14.4",
+    "axios": "^0.21.1",
+    "axios-cookiejar-support": "^5.0.5",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "qs": "^6.14.0",
+    "telegraf": "^4.16.3",
+    "tesseract.js": "^6.0.0",
+    "tough-cookie": "^5.1.2"
+  }
+}
